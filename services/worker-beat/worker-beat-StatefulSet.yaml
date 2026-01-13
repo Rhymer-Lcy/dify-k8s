@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: worker-beat
+  namespace: dify
+  labels:
+    app: worker-beat
+    app.kubernetes.io/instance: worker-beat
+spec:
+  serviceName: worker-beat
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker-beat
+  template:
+    metadata:
+      labels:
+        app: worker-beat
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: worker-beat
+          image: langgenius/dify-api:1.11.2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5001
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 300m
+              memory: 1.5Gi
+            requests:
+              cpu: 100m
+              memory: 0.5Gi
+          envFrom:
+            - configMapRef:
+                name: dify-config
+          imagePullPolicy: IfNotPresent
